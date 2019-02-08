@@ -1,0 +1,3 @@
+[submodule "MinecraftClient"]
+	path = MinecraftClient
+	url = https://github.com/ORelio/Minecraft-Console-Client.git
