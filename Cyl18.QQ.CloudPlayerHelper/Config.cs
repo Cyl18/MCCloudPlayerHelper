@@ -13,7 +13,7 @@ namespace Cyl18.QQ.CloudPlayerHelper
     {
         public string ErrorMessageReceiverQQ { get; set; } = "775942303";
         public string AdminQQ { get; set; } = "775942303";
-        public GroupListDictionary<ServerInfo> ServerInfos = new GroupListDictionary<ServerInfo>();
+        public GroupListDictionary<ServerInfo> ServerInfos { get; set; } = new GroupListDictionary<ServerInfo>();
 
         public ServerInfo GetServerInfo(string group, string name)
         {
@@ -21,10 +21,46 @@ namespace Cyl18.QQ.CloudPlayerHelper
         }
     }
 
-    public class ServerInfo : IEquatable<ServerInfo>
+    public abstract class MCInfo : IEquatable<MCInfo>
     {
         public string ServerName { get; set; }
         public string ServerUrl { get; set; }
+
+        public bool Equals(MCInfo other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(ServerName, other.ServerName) && string.Equals(ServerUrl, other.ServerUrl);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == this.GetType() && Equals((MCInfo) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((ServerName != null ? ServerName.GetHashCode() : 0) * 397) ^ (ServerUrl != null ? ServerUrl.GetHashCode() : 0);
+            }
+        }
+
+        public static bool operator ==(MCInfo left, MCInfo right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(MCInfo left, MCInfo right)
+        {
+            return !Equals(left, right);
+        }
+    }
+
+    public class ServerInfo : MCInfo
+    {
         public bool Monitor { get; set; }
         public bool MonitorPlayer { get; set; }
         public string BoomMessage { get; set; } = "服务器爆炸了!";
@@ -35,33 +71,5 @@ namespace Cyl18.QQ.CloudPlayerHelper
         public bool LastTimeOnline { get; set; }
         [JsonIgnore]
         public bool Inited { get; set; }
-
-        public bool Equals(ServerInfo other)
-        {
-            if (other is null) return false;
-            return ReferenceEquals(this, other) || string.Equals(ServerUrl, other.ServerUrl);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == this.GetType() && Equals((ServerInfo) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (ServerUrl != null ? ServerUrl.GetHashCode() : 0);
-        }
-
-        public static bool operator ==(ServerInfo left, ServerInfo right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(ServerInfo left, ServerInfo right)
-        {
-            return !Equals(left, right);
-        }
     }
 }

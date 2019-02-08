@@ -26,13 +26,13 @@ namespace Cyl18.QQ.CloudPlayerHelper
                 var group = serverInfo.group;
                 var stat = ServerPinger.GetStatus(info.ServerUrl).Result;
                 var serverUp = stat != null;
-                if (serverUp != info.LastTimeOnline)
+                if (serverUp != info.LastTimeOnline && info.Monitor)
                 {
                     group.SendGroup(serverUp ? $"{info.ServerName} 服务器上线啦!" : $"{info.ServerName} 服务器: {info.BoomMessage}");
                     info.LastTimeOnline = serverUp;
                 }
 
-                if (stat?.players?.sample != null)
+                if (stat?.players?.sample != null && info.MonitorPlayer)
                 {
                     var currentPlayers = new HashSet<string>(stat.players.sample.Select(p => p.name));
                     if (!currentPlayers.SetEquals(lastPlayers))
