@@ -49,7 +49,13 @@ namespace Cyl18.QQ.CloudPlayerHelper.MahuaEvents
             Sender = sender;
             Group = @group;
         }
-
+        [Matchers("删除服务器配置", "Delete-ServerInfo")]
+        [RequireServerExists, SaveConfig]
+        string DeleteAllGroupConfig(string name)
+        {
+            Config.Instance.ServerInfos.GetGroup(Group).RemoveWhere(info => info.ServerName == name);
+            return "好嘞.";
+        }
         [Matchers("添加服务器配置", "Add-ServerInfo"), SaveConfig]
         string AddAllGroupConfig(string name, string url)
         {
